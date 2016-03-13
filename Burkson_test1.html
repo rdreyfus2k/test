@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Ron Dreyfus CSV Reader</title>
+  <script src="http://code.jquery.com/jquery-1.12.0.min.js"></script>
+<style type="text/css">
+	#csvTable
+	{
+		width: 62%;
+		margin:auto;
+		border: 1px solid black;
+		font-family: arial;
+		table-layout: fixed;
+	}
+	
+	#csvTable th
+	{padding:10px 5px;}
+
+	#csvTable td
+	{padding:6px 10px;}
+
+	#csvTable tr:nth-child(even)
+	{background-color: #8AC0DE;}
+
+	.headingRow
+	{
+		background-color: #005685;
+		color:white;	
+	}
+
+</style>	
+</head>
+<body>
+<div class="tableContainer">
+	<table id='csvTable'></table>
+</div>
+</body>
+<script>
+$(document).ready(function(){
+ 
+	//JQuery AJAX get request to pull in data from a csv file
+	$.ajax({
+		type:"GET",
+		url:"children.csv",
+		datatype: "text",
+		success: function(data) {ProcessCsvData(data);}
+	});
+	
+});
+
+function ProcessCsvData(dataIncoming)
+{
+	//function required for JSFiddle
+	if (dataIncoming.length == 0)
+	{
+		dataIncoming = GetCSVdata();
+	}
+	
+
+	var csvLines = dataIncoming.split(/\r\n/) //splint all lines of the csv data into an array
+	var headings = csvLines[0].split(","); //split first line of csv data consiting of the headers for the data
+
+	$("#csvTable").append("<tr class='headingRow'></tr>");
+
+	//add headers to the table
+	$.each(headings, function(i,value)
+	{
+		$("#csvTable .headingRow").append("<th>" + value + "</th>");
+	});
+	
+
+	//add csv data to table
+	var HTMLtext = "";
+
+	for (var i=1; i < csvLines.length-1; i++) //loop through each row of data
+	{
+		var valuesTemp = csvLines[i].split(","); //split each line of data into an array
+
+		HTMLtext += "<tr>";
+
+		for (j=0; j < valuesTemp.length; j++)
+		{
+			HTMLtext += "<td>" + valuesTemp[j] + "</td>"; //add each value in a row to the table
+		}
+		HTMLtext += "</tr>";
+	}
+
+	$("#csvTable").append(HTMLtext);
+	
+}
+
+function GetCSVdata()
+{
+	//function is for JSFiddle to simulate an AJAX request
+
+	var tempData = "Child First Name,Child Last Name,Age,Child's Father's Name,Child's Mother's Name\r\nDavid,Smith,5,Mike,Gloria\r\nSuzy,Jones,6,Ben,Allison\r\nHenry,Harrison,5,Frank,Linda\r\nTori,O'Connor,4,Jack,Kathy\r\nOliver,King,6,Robert,Elizbeth";
+
+	return tempData;
+	
+}
+
+
+</script>
+
+</html>
